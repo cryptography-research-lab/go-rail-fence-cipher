@@ -2,7 +2,6 @@ package rail_fence_cipher
 
 import (
 	"errors"
-	"fmt"
 	variable_parameter "github.com/golang-infrastructure/go-variable-parameter"
 	"strings"
 	"unicode/utf8"
@@ -58,7 +57,7 @@ func EncryptW(plaintext string, options ...*Options) (string, error) {
 		table[rowIndex][columnIndex] = plaintextRuneSlice[columnIndex]
 	})
 
-	fmt.Println(table.String())
+	//fmt.Println(table.String())
 
 	result := strings.Builder{}
 	table.VisitByEdgeDirection(EdgeDirectionLeftTop2Right, func(table Table, rowIndex, columnIndex int, character rune) {

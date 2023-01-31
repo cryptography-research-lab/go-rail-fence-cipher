@@ -2,7 +2,6 @@ package rail_fence_cipher
 
 import (
 	"errors"
-	"fmt"
 	variable_parameter "github.com/golang-infrastructure/go-variable-parameter"
 	"strings"
 	"unicode/utf8"
@@ -66,15 +65,13 @@ func DecryptW(ciphertext string, options ...*Options) (string, error) {
 
 	// 遍历设置W路径上的字符
 	ciphertextConsumer := NewTextConsumer(ciphertext, '.')
-	for rowIndex, row := range table {
-		for columnIndex, cellValue := range row {
-			if cellValue == 1 {
-				table[rowIndex][columnIndex] = ciphertextConsumer.Take()
-			}
+	table.VisitByEdgeDirection(EdgeDirectionLeftTop2Right, func(table Table, rowIndex, columnIndex int, character rune) {
+		if character == 1 {
+			table[rowIndex][columnIndex] = ciphertextConsumer.Take()
 		}
-	}
+	})
 
-	fmt.Println(table.String())
+	//fmt.Println(table.String())
 
 	// 收集W路径上的字符
 	result := strings.Builder{}
