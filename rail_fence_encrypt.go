@@ -7,7 +7,9 @@ import (
 	"unicode/utf8"
 )
 
-// Encrypt 对文本进行加密
+// ------------------------------------------------ ---------------------------------------------------------------------
+
+// Encrypt 对明文进行加密
 func Encrypt(plaintext string, options ...*Options) (string, error) {
 
 	// 未传递参数的话则设置默认的参数
@@ -15,7 +17,7 @@ func Encrypt(plaintext string, options ...*Options) (string, error) {
 		return NewOptions()
 	})
 
-	// TODO 参数检查
+	// 参数检查
 	if options[0].PutEdgeDirection == options[0].TakeEdgeDirection {
 		return "", errors.New("PutEdgeDirection can not equals TakeEdgeDirection")
 	}
@@ -31,6 +33,45 @@ func Encrypt(plaintext string, options ...*Options) (string, error) {
 	// 收集字符
 	result := strings.Builder{}
 	table.VisitByEdgeDirection(options[0].TakeEdgeDirection, func(table RailRenceTable, rowIndex, columnIndex int, character rune) {
+		result.WriteRune(character)
+	})
+
+	return result.String(), nil
+}
+
+// EncryptW W型的栅栏加密
+func EncryptW(plaintext string, options ...*Options) (string, error) {
+	// 未传递参数的话则设置默认的参数
+	options = variable_parameter.SetDefaultParamByFunc(options, func() *Options {
+		return NewOptions()
+	})
+
+	// 参数检查
+	if options[0].Rows < 3 {
+		return "", errors.New("rows min 3")
+	}
+
+	table := NewTable(options[0].Rows, utf8.RuneCountInString(plaintext))
+	rowIndex := 0
+	increment := 1
+	plaintextRuneSlice := []rune(plaintext)
+	for index := 0; index < len(table[0]); index++ {
+		table[rowIndex][index] = plaintextRuneSlice[index]
+		rowIndex += increment
+		if rowIndex < 0 {
+			rowIndex += 2
+			index = 1
+		} else if rowIndex >= len(table) {
+			rowIndex -= 2
+			index = -1
+		}
+	}
+
+	result := strings.Builder{}
+	table.VisitByEdgeDirection(EdgeDirectionLeftTop2Right, func(table RailRenceTable, rowIndex, columnIndex int, character rune) {
+		if character == 0 {
+			return
+		}
 		result.WriteRune(character)
 	})
 

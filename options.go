@@ -45,6 +45,8 @@ type Options struct {
 
 	// 栅栏是几列
 	Columns int
+	// 栅栏是几行
+	Rows int
 
 	// 长度不够的时候拿什么字符来填充对齐
 	FillCharacter rune
@@ -53,9 +55,10 @@ type Options struct {
 // NewOptions 创建一个选项，使用默认的参数配置
 func NewOptions() *Options {
 	return &Options{
-		PutEdgeDirection:  EdgeDirectionLeftTop2Bottom,
-		TakeEdgeDirection: EdgeDirectionLeftTop2Right,
+		PutEdgeDirection:  EdgeDirectionLeftTop2Right,
+		TakeEdgeDirection: EdgeDirectionLeftTop2Bottom,
 		Columns:           2,
+		Rows:              3,
 		FillCharacter:     'x',
 	}
 }
