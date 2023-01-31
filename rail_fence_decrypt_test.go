@@ -6,9 +6,10 @@ import (
 )
 
 func TestDecrypt(t *testing.T) {
-
+	decrypt, err := Decrypt("KYsd3js2E{a2jda}")
+	assert.Nil(t, err)
+	t.Log(decrypt)
 }
-
 
 func TestBatch(t *testing.T) {
 	for i := 0; i <= int(EdgeDirectionRightBottom2Left); i++ {
@@ -36,4 +37,3 @@ func TestBatch(t *testing.T) {
 		}
 	}
 }
-
