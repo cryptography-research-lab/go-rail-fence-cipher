@@ -11,3 +11,7 @@ func TestEncrypt(t *testing.T) {
 	assert.Nil(t, err)
 	t.Log(encrypt)
 }
+
+func TestEncryptW(t *testing.T) {
+
+}

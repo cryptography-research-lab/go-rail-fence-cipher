@@ -63,4 +63,29 @@ func NewOptions() *Options {
 	}
 }
 
+func (x *Options) WithPutEdgeDirection(putEdgeDirection EdgeDirection) *Options {
+	x.PutEdgeDirection = putEdgeDirection
+	return x
+}
+
+func (x *Options) WithTakeEdgeDirection(takeEdgeDirection EdgeDirection) *Options {
+	x.TakeEdgeDirection = takeEdgeDirection
+	return x
+}
+
+func (x *Options) WithColumns(columns int) *Options {
+	x.Columns = columns
+	return x
+}
+
+func (x *Options) WithRows(rows int) *Options {
+	x.Rows = rows
+	return x
+}
+
+func (x *Options) WithFillCharacter(fillCharacter rune) *Options {
+	x.FillCharacter = fillCharacter
+	return x
+}
+
 // ------------------------------------------------ ---------------------------------------------------------------------

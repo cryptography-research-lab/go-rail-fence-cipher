@@ -2,6 +2,7 @@ package rail_fence_cipher
 
 import (
 	"errors"
+	"fmt"
 	variable_parameter "github.com/golang-infrastructure/go-variable-parameter"
 	"strings"
 	"unicode/utf8"
@@ -26,13 +27,13 @@ func Encrypt(plaintext string, options ...*Options) (string, error) {
 	plaintextConsumer := NewTextConsumer(plaintext, options[0].FillCharacter)
 	rowCount := (utf8.RuneCountInString(plaintext) + options[0].Columns - 1) / options[0].Columns
 	table := NewTable(rowCount, options[0].Columns)
-	table.VisitByEdgeDirection(options[0].PutEdgeDirection, func(table RailRenceTable, rowIndex, columnIndex int, character rune) {
+	table.VisitByEdgeDirection(options[0].PutEdgeDirection, func(table Table, rowIndex, columnIndex int, character rune) {
 		table[rowIndex][columnIndex] = plaintextConsumer.Take()
 	})
 
 	// 收集字符
 	result := strings.Builder{}
-	table.VisitByEdgeDirection(options[0].TakeEdgeDirection, func(table RailRenceTable, rowIndex, columnIndex int, character rune) {
+	table.VisitByEdgeDirection(options[0].TakeEdgeDirection, func(table Table, rowIndex, columnIndex int, character rune) {
 		result.WriteRune(character)
 	})
 
@@ -52,23 +53,15 @@ func EncryptW(plaintext string, options ...*Options) (string, error) {
 	}
 
 	table := NewTable(options[0].Rows, utf8.RuneCountInString(plaintext))
-	rowIndex := 0
-	increment := 1
 	plaintextRuneSlice := []rune(plaintext)
-	for index := 0; index < len(table[0]); index++ {
-		table[rowIndex][index] = plaintextRuneSlice[index]
-		rowIndex += increment
-		if rowIndex < 0 {
-			rowIndex += 2
-			index = 1
-		} else if rowIndex >= len(table) {
-			rowIndex -= 2
-			index = -1
-		}
-	}
+	table.VisitByW(func(table Table, rowIndex, columnIndex int, character rune) {
+		table[rowIndex][columnIndex] = plaintextRuneSlice[columnIndex]
+	})
+
+	fmt.Println(table.String())
 
 	result := strings.Builder{}
-	table.VisitByEdgeDirection(EdgeDirectionLeftTop2Right, func(table RailRenceTable, rowIndex, columnIndex int, character rune) {
+	table.VisitByEdgeDirection(EdgeDirectionLeftTop2Right, func(table Table, rowIndex, columnIndex int, character rune) {
 		if character == 0 {
 			return
 		}

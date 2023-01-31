@@ -6,7 +6,13 @@ import (
 )
 
 func TestDecrypt(t *testing.T) {
-	decrypt, err := Decrypt("KYsd3js2E{a2jda}")
+
+	//decrypt, err := Decrypt("KYsd3js2E{a2jda}")
+
+	decrypt, err := Decrypt("ssC@sC1rct0atfvbf_ei{srtse#}",
+		NewOptions().WithColumns(4).WithPutEdgeDirection(EdgeDirectionLeftTop2Bottom).WithTakeEdgeDirection(EdgeDirectionLeftTop2Right))
+	// Output: ssctf{ssCtf_seC10ver#@rabit}
+
 	assert.Nil(t, err)
 	t.Log(decrypt)
 }
@@ -36,4 +42,17 @@ func TestBatch(t *testing.T) {
 
 		}
 	}
+}
+
+func TestDecryptW(t *testing.T) {
+
+	ciphertext := "ccehgyaefnpeoobe{lcirg}epriec_ora_g"
+	// Output: cyberpeace{railfence_cipher_gogogo}
+
+	//ciphertext, err := EncryptW("helloworld")
+	//assert.Nil(t, err)
+	//t.Log(ciphertext)
+	decrypt, err := DecryptW(ciphertext, NewOptions().WithRows(5))
+	assert.Nil(t, err)
+	t.Log(decrypt)
 }

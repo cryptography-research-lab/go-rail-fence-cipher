@@ -1,12 +1,14 @@
 package rail_fence_cipher
 
-// RailRenceTable 用于表示一张栅栏表，封装了一些表的操作方法
-type RailRenceTable [][]rune
+import "strings"
+
+// Table 用于表示一张栅栏表，封装了一些表的操作方法
+type Table [][]rune
 
 // NewTable 创建一张指定大小的二维表格
 // rowCount: 表的行数
 // columnCount: 表的列数
-func NewTable(rowCount, columnCount int) RailRenceTable {
+func NewTable(rowCount, columnCount int) Table {
 	table := make([][]rune, rowCount)
 	for rowIndex := range table {
 		table[rowIndex] = make([]rune, columnCount)
@@ -15,12 +17,12 @@ func NewTable(rowCount, columnCount int) RailRenceTable {
 }
 
 // RowCount 栅栏表的行数
-func (x RailRenceTable) RowCount() int {
+func (x Table) RowCount() int {
 	return len(x)
 }
 
 // ColumnCount 栅栏表的列数
-func (x RailRenceTable) ColumnCount() int {
+func (x Table) ColumnCount() int {
 	if x.RowCount() == 0 {
 		return 0
 	} else {
@@ -28,10 +30,12 @@ func (x RailRenceTable) ColumnCount() int {
 	}
 }
 
+type VisitFunc func(table Table, rowIndex, columnIndex int, character rune)
+
 // VisitByEdgeDirection 根据给定的边的方向遍历栅栏表
 // edgeDirection: 要遍历的方向
 // visitFunc: 访问时对每个元素的访问方法，每个单元格都会调用一次此方法
-func (x RailRenceTable) VisitByEdgeDirection(edgeDirection EdgeDirection, visitFunc func(table RailRenceTable, rowIndex, columnIndex int, character rune)) {
+func (x Table) VisitByEdgeDirection(edgeDirection EdgeDirection, visitFunc VisitFunc) {
 
 	switch edgeDirection {
 
@@ -92,4 +96,58 @@ func (x RailRenceTable) VisitByEdgeDirection(edgeDirection EdgeDirection, visitF
 			}
 		}
 	}
+}
+
+// VisitByW W型遍历表格
+func (x Table) VisitByW(visitFunc VisitFunc) {
+	step := 1
+	rowIndex := 0
+	for columnIndex := 0; columnIndex < len(x[0]); columnIndex++ {
+
+		visitFunc(x, rowIndex, columnIndex, x[rowIndex][columnIndex])
+
+		rowIndex += step
+
+		// 触底回弹
+		if rowIndex < 0 {
+			rowIndex += 2
+			step = 1
+		} else if rowIndex >= len(x) {
+			// 触顶回弹
+			rowIndex -= 2
+			step = -1
+		}
+	}
+}
+
+// 把加密使用的表格转为字符串返回，用于观察表格长啥样
+// 返回数据样例：
+//
+//	 [
+//		[ I, C, L, O, M ]
+//		[ P, H, D, R, Z ]
+//		[ U, V, F, Y, B ]
+//		[ G, X, T, Q, E ]
+//		[ S, N, K, W, A ]
+//	]
+func (x Table) String() string {
+	sb := strings.Builder{}
+	sb.WriteString("[\n")
+	for _, line := range x {
+		sb.WriteString("\t[ ")
+		for index, cellValue := range line {
+			// 2023-2-1 02:32:09 为了打印时美观，将其替换为可视化的字符
+			if cellValue == 0 {
+				cellValue = '.'
+			}
+			sb.WriteRune(cellValue)
+			if index+1 != len(line) {
+				sb.WriteString(",")
+			}
+			sb.WriteString(" ")
+		}
+		sb.WriteString("]\n")
+	}
+	sb.WriteString("]")
+	return sb.String()
 }
