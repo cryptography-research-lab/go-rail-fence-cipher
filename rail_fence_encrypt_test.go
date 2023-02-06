@@ -7,7 +7,7 @@ import (
 
 func TestEncrypt(t *testing.T) {
 	plaintext := "helloworld"
-	encrypt, err := Encrypt(plaintext)
+	encrypt, err := Encrypt(plaintext, NewOptions().WithColumns(3))
 	assert.Nil(t, err)
 	t.Log(encrypt)
 }

@@ -5,7 +5,7 @@ import "strings"
 // Table 用于表示一张栅栏表，封装了一些表的操作方法
 type Table [][]rune
 
-// NewTable 创建一张指定大小的二维表格
+// NewTable 创建一张指定大小的二维表格作为栅栏
 // rowCount: 表的行数
 // columnCount: 表的列数
 func NewTable(rowCount, columnCount int) Table {
